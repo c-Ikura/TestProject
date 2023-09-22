@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
     public float dashColdTime;
     public float nextDashTime;
 
+    public int Hp;
+
     private void Awake()
     {
         physicCheck = GetComponent<PhysicCheck>();
@@ -38,7 +40,6 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        print(input);
 
         if (physicCheck.isUp)
         {
@@ -111,7 +112,7 @@ public class PlayerController : MonoBehaviour
         {
             dashColdTime -= Time.deltaTime;
 
-            if (dashColdTime <= 0)
+            if (dashColdTime <= 0 && state != PlayerState.DASH)
             {
                 if (input == Vector2.up)
                 {
@@ -177,5 +178,23 @@ public class PlayerController : MonoBehaviour
     {
         print(2);
         playerRb.velocity = dir * moveSpeed;
+    }
+
+
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Trap"))
+        {
+            Hp--;
+            if (Hp <= 0)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene("PlayScene");
+            }
+        }
+        if (other.CompareTag("Gameover"))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("PlayScene");
+        }
     }
 }
